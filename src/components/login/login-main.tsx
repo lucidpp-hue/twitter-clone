@@ -30,29 +30,30 @@ export function LoginMain(): JSX.Element {
         </i>
         <div className='flex max-w-xs flex-col gap-4 font-twitter-chirp-extended lg:max-w-none lg:gap-16'>
           <h1
-            className='text-3xl before:content-["See_what’s_happening_in_the_world_right_now."] 
-                       lg:text-6xl lg:before:content-["Happening_now"]'
+            className='text-3xl before:content-["See_what's_happening_in_the_world_right_now."] 
+                       lg:text-6xl lg:before:content-["2026_PeytOtoria"]'
           />
           <h2 className='hidden text-xl lg:block lg:text-3xl'>
-            Join Twitter today.
+            Join PeytOtoria today.
           </h2>
         </div>
         <div className='flex max-w-xs flex-col gap-6 [&_button]:py-2'>
           <div className='grid gap-3 font-bold'>
             <Button
+              disabled
               className='flex justify-center gap-2 border border-light-line-reply font-bold text-light-primary transition
-                         hover:bg-[#e6e6e6] focus-visible:bg-[#e6e6e6] active:bg-[#cccccc] dark:border-0 dark:bg-white
-                         dark:hover:brightness-90 dark:focus-visible:brightness-90 dark:active:brightness-75'
-              onClick={signInWithGoogle}
+                         hover:bg-[#e6e6e6] focus-visible:bg-[#e6e6e6] active:bg-[#cccccc] dark:border-0 dark:bg-gray-300
+                         dark:hover:brightness-90 dark:focus-visible:brightness-90 dark:active:brightness-75 opacity-60 cursor-not-allowed'
             >
-              <CustomIcon iconName='GoogleIcon' /> Sign up with Google
+              <CustomIcon iconName='GoogleIcon' /> Coming Soon
             </Button>
             <Button
+              disabled
               className='flex cursor-not-allowed justify-center gap-2 border border-light-line-reply font-bold text-light-primary
                          transition hover:bg-[#e6e6e6] focus-visible:bg-[#e6e6e6] active:bg-[#cccccc] dark:border-0
-                         dark:bg-white dark:hover:brightness-90 dark:focus-visible:brightness-90 dark:active:brightness-75'
+                         dark:bg-gray-300 dark:hover:brightness-90 dark:focus-visible:brightness-90 dark:active:brightness-75 opacity-60'
             >
-              <CustomIcon iconName='AppleIcon' /> Sign up with Apple
+              <CustomIcon iconName='AppleIcon' /> Coming Soon
             </Button>
             <div className='grid w-full grid-cols-[1fr,auto,1fr] items-center gap-2'>
               <i className='border-b border-light-border dark:border-dark-border' />
@@ -60,10 +61,11 @@ export function LoginMain(): JSX.Element {
               <i className='border-b border-light-border dark:border-dark-border' />
             </div>
             <Button
-              className='cursor-not-allowed bg-accent-blue text-white transition hover:brightness-90
-                         focus-visible:!ring-accent-blue/80 focus-visible:brightness-90 active:brightness-75'
+              disabled
+              className='cursor-not-allowed bg-gray-400 text-white transition hover:brightness-90
+                         focus-visible:!ring-accent-blue/80 focus-visible:brightness-90 active:brightness-75 opacity-60'
             >
-              Sign up with phone or email
+              Coming Soon
             </Button>
             <p
               className='inner:custom-underline inner:custom-underline text-center text-xs
@@ -99,12 +101,12 @@ export function LoginMain(): JSX.Element {
           <div className='flex flex-col gap-3'>
             <p className='font-bold'>Already have an account? </p>
             <Button
-              className='border border-light-line-reply font-bold text-accent-blue hover:bg-accent-blue/10
-                         focus-visible:bg-accent-blue/10 focus-visible:!ring-accent-blue/80 active:bg-accent-blue/20
-                         dark:border-light-secondary'
-              onClick={signInWithGoogle}
+              disabled
+              className='border border-light-line-reply font-bold text-gray-400 hover:bg-gray-100
+                         focus-visible:bg-gray-100 focus-visible:!ring-gray-300 active:bg-gray-200
+                         dark:border-light-secondary opacity-60 cursor-not-allowed'
             >
-              Sign in
+              Coming Soon
             </Button>
           </div>
         </div>

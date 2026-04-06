@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <g>
+    <!-- Penguin body outline -->
+    <path d="M256 50c-40 0-80 30-80 80v100c0 20 10 40 20 50v80c-30 20-50 50-50 80 0 60 40 100 110 100s110-40 110-100c0-30-20-60-50-80v-80c10-10 20-30 20-50V130c0-50-40-80-80-80z" fill="none" stroke="black" stroke-width="16" stroke-linejoin="round" stroke-linecap="round"/>
+    
+    <!-- Head -->
+    <circle cx="256" cy="120" r="50" fill="none" stroke="black" stroke-width="16" stroke-linecap="round"/>
+    
+    <!-- Eyes -->
+    <circle cx="240" cy="110" r="8" fill="black"/>
+    <circle cx="272" cy="110" r="8" fill="black"/>
+    
+    <!-- Beak/mouth -->
+    <path d="M256 130 L280 150 L256 145 Z" fill="black" stroke="black" stroke-width="12" stroke-linejoin="round"/>
+    
+    <!-- Wings -->
+    <path d="M200 160 L160 220 L190 240" fill="none" stroke="black" stroke-width="16" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M312 160 L352 220 L322 240" fill="none" stroke="black" stroke-width="16" stroke-linecap="round" stroke-linejoin="round"/>
+    
+    <!-- Feet -->
+    <path d="M230 360 L210 400 L230 395 L250 410" fill="none" stroke="black" stroke-width="14" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M282 360 L302 400 L282 395 L262 410" fill="none" stroke="black" stroke-width="14" stroke-linecap="round" stroke-linejoin="round"/>
+  </g>
+</svg>

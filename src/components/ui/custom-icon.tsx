@@ -15,7 +15,7 @@ const Icons = {
   AppleIcon,
   PinOffIcon,
   GoogleIcon,
-  TwitterIcon,
+  TwitterIcon: PeytOtoriaIcon,
   FeatherIcon,
   SpinnerIcon,
   TriangleIcon
@@ -30,11 +30,19 @@ export function CustomIcon({
   return <Icon className={className ?? 'h-6 w-6'} />;
 }
 
-function TwitterIcon({ className }: IconProps): JSX.Element {
+function PeytOtoriaIcon({ className }: IconProps): JSX.Element {
   return (
-    <svg className={cn('fill-current', className)} viewBox='0 0 24 24'>
+    <svg className={cn('fill-current', className)} viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'>
       <g>
-        <path d='M23.643 4.937c-.835.37-1.732.62-2.675.733.962-.576 1.7-1.49 2.048-2.578-.9.534-1.897.922-2.958 1.13-.85-.904-2.06-1.47-3.4-1.47-2.572 0-4.658 2.086-4.658 4.66 0 .364.042.718.12 1.06-3.873-.195-7.304-2.05-9.602-4.868-.4.69-.63 1.49-.63 2.342 0 1.616.823 3.043 2.072 3.878-.764-.025-1.482-.234-2.11-.583v.06c0 2.257 1.605 4.14 3.737 4.568-.392.106-.803.162-1.227.162-.3 0-.593-.028-.877-.082.593 1.85 2.313 3.198 4.352 3.234-1.595 1.25-3.604 1.995-5.786 1.995-.376 0-.747-.022-1.112-.065 2.062 1.323 4.51 2.093 7.14 2.093 8.57 0 13.255-7.098 13.255-13.254 0-.2-.005-.402-.014-.602.91-.658 1.7-1.477 2.323-2.41z' />
+        <path d='M256 50c-40 0-80 30-80 80v100c0 20 10 40 20 50v80c-30 20-50 50-50 80 0 60 40 100 110 100s110-40 110-100c0-30-20-60-50-80v-80c10-10 20-30 20-50V130c0-50-40-80-80-80z' fill='none' stroke='currentColor' strokeWidth='16' strokeLinejoin='round' strokeLinecap='round'/>
+        <circle cx='256' cy='120' r='50' fill='none' stroke='currentColor' strokeWidth='16' strokeLinecap='round'/>
+        <circle cx='240' cy='110' r='8' fill='currentColor'/>
+        <circle cx='272' cy='110' r='8' fill='currentColor'/>
+        <path d='M256 130 L280 150 L256 145 Z' fill='currentColor' stroke='currentColor' strokeWidth='12' strokeLinejoin='round'/>
+        <path d='M200 160 L160 220 L190 240' fill='none' stroke='currentColor' strokeWidth='16' strokeLinecap='round' strokeLinejoin='round'/>
+        <path d='M312 160 L352 220 L322 240' fill='none' stroke='currentColor' strokeWidth='16' strokeLinecap='round' strokeLinejoin='round'/>
+        <path d='M230 360 L210 400 L230 395 L250 410' fill='none' stroke='currentColor' strokeWidth='14' strokeLinecap='round' strokeLinejoin='round'/>
+        <path d='M282 360 L302 400 L282 395 L262 410' fill='none' stroke='currentColor' strokeWidth='14' strokeLinecap='round' strokeLinejoin='round'/>
       </g>
     </svg>
   );
