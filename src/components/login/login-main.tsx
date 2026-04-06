@@ -1,10 +1,11 @@
-import { useAuth } from '@lib/context/auth-context';
+import { useState } from 'react';
 import { NextImage } from '@components/ui/next-image';
 import { CustomIcon } from '@components/ui/custom-icon';
 import { Button } from '@components/ui/button';
+import { AuthForm } from './auth-form';
 
 export function LoginMain(): JSX.Element {
-  const { signInWithGoogle } = useAuth();
+  const [authMode, setAuthMode] = useState<'signin' | 'signup'>('signup');
 
   return (
     <main className='grid lg:grid-cols-[1fr,45vw]'>
@@ -37,78 +38,67 @@ export function LoginMain(): JSX.Element {
             Join PeytOtoria today.
           </h2>
         </div>
-        <div className='flex max-w-xs flex-col gap-6 [&_button]:py-2'>
-          <div className='grid gap-3 font-bold'>
-            <Button
-              disabled
-              className='flex justify-center gap-2 border border-light-line-reply font-bold text-light-primary transition
-                         hover:bg-[#e6e6e6] focus-visible:bg-[#e6e6e6] active:bg-[#cccccc] dark:border-0 dark:bg-gray-300
-                         dark:hover:brightness-90 dark:focus-visible:brightness-90 dark:active:brightness-75 opacity-60 cursor-not-allowed'
-            >
-              <CustomIcon iconName='GoogleIcon' /> Coming Soon
-            </Button>
-            <Button
-              disabled
-              className='flex cursor-not-allowed justify-center gap-2 border border-light-line-reply font-bold text-light-primary
-                         transition hover:bg-[#e6e6e6] focus-visible:bg-[#e6e6e6] active:bg-[#cccccc] dark:border-0
-                         dark:bg-gray-300 dark:hover:brightness-90 dark:focus-visible:brightness-90 dark:active:brightness-75 opacity-60'
-            >
-              <CustomIcon iconName='AppleIcon' /> Coming Soon
-            </Button>
-            <div className='grid w-full grid-cols-[1fr,auto,1fr] items-center gap-2'>
-              <i className='border-b border-light-border dark:border-dark-border' />
-              <p>or</p>
-              <i className='border-b border-light-border dark:border-dark-border' />
-            </div>
-            <Button
-              disabled
-              className='cursor-not-allowed bg-gray-400 text-white transition hover:brightness-90
-                         focus-visible:!ring-accent-blue/80 focus-visible:brightness-90 active:brightness-75 opacity-60'
-            >
-              Coming Soon
-            </Button>
-            <p
-              className='inner:custom-underline inner:custom-underline text-center text-xs
-                         text-light-secondary inner:text-accent-blue dark:text-dark-secondary'
-            >
-              By signing up, you agree to the{' '}
-              <a
-                href='https://twitter.com/tos'
-                target='_blank'
-                rel='noreferrer'
-              >
-                Terms of Service
-              </a>{' '}
-              and{' '}
-              <a
-                href='https://twitter.com/privacy'
-                target='_blank'
-                rel='noreferrer'
-              >
-                Privacy Policy
-              </a>
-              , including{' '}
-              <a
-                href='https://help.twitter.com/rules-and-policies/twitter-cookies'
-                target='_blank'
-                rel='noreferrer'
-              >
-                Cookie Use
-              </a>
-              .
-            </p>
+        <div className='flex max-w-xs flex-col gap-6'>
+          <AuthForm mode={authMode} />
+          
+          <div className='flex flex-col gap-3 text-center'>
+            {authMode === 'signup' ? (
+              <>
+                <p className='text-sm text-light-secondary dark:text-dark-secondary'>
+                  Already have an account?{' '}
+                  <button
+                    onClick={() => setAuthMode('signin')}
+                    className='font-bold text-accent-blue hover:underline'
+                  >
+                    Sign In
+                  </button>
+                </p>
+              </>
+            ) : (
+              <>
+                <p className='text-sm text-light-secondary dark:text-dark-secondary'>
+                  Don&apos;t have an account?{' '}
+                  <button
+                    onClick={() => setAuthMode('signup')}
+                    className='font-bold text-accent-blue hover:underline'
+                  >
+                    Sign Up
+                  </button>
+                </p>
+              </>
+            )}
           </div>
-          <div className='flex flex-col gap-3'>
-            <p className='font-bold'>Already have an account? </p>
-            <Button
-              disabled
-              className='border border-light-line-reply font-bold text-gray-400 hover:bg-gray-100
-                         focus-visible:bg-gray-100 focus-visible:!ring-gray-300 active:bg-gray-200
-                         dark:border-light-secondary opacity-60 cursor-not-allowed'
+
+          <p
+            className='inner:custom-underline inner:custom-underline text-center text-xs
+                       text-light-secondary inner:text-accent-blue dark:text-dark-secondary'
+          >
+            By signing up, you agree to the{' '}
+            <a
+              href='https://twitter.com/tos'
+              target='_blank'
+              rel='noreferrer'
             >
-              Coming Soon
-            </Button>
-          </div>
+              Terms of Service
+            </a>{' '}
+            and{' '}
+            <a
+              href='https://twitter.com/privacy'
+              target='_blank'
+              rel='noreferrer'
+            >
+              Privacy Policy
+            </a>
+            , including{' '}
+            <a
+              href='https://help.twitter.com/rules-and-policies/twitter-cookies'
+              target='_blank'
+              rel='noreferrer'
+            >
+              Cookie Use
+            </a>
+            .
+          </p>
         </div>
       </div>
     </main>

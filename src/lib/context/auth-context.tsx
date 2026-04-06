@@ -1,31 +1,10 @@
-import { useState, useEffect, useContext, createContext, useMemo } from 'react';
-import {
-  signInWithPopup,
-  GoogleAuthProvider,
-  onAuthStateChanged,
-  signOut as signOutFirebase
-} from 'firebase/auth';
-import {
-  doc,
-  getDoc,
-  setDoc,
-  onSnapshot,
-  serverTimestamp
-} from 'firebase/firestore';
-import { auth } from '@lib/firebase/app';
-import {
-  usersCollection,
-  userStatsCollection,
-  userBookmarksCollection
-} from '@lib/firebase/collections';
+import { useState, useEffect, useContext, createContext, useMemo, useCallback } from 'react';
+import { useRouter } from 'next/router';
+import { createClient } from '@lib/supabase/client';
 import { getRandomId, getRandomInt } from '@lib/random';
-import { checkUsernameAvailability } from '@lib/firebase/utils';
 import type { ReactNode } from 'react';
-import type { User as AuthUser } from 'firebase/auth';
-import type { WithFieldValue } from 'firebase/firestore';
+import type { User as SupabaseUser } from '@supabase/supabase-js';
 import type { User } from '@lib/types/user';
-import type { Bookmark } from '@lib/types/bookmark';
-import type { Stats } from '@lib/types/stats';
 
 type AuthContext = {
   user: User | null;
@@ -33,9 +12,10 @@ type AuthContext = {
   loading: boolean;
   isAdmin: boolean;
   randomSeed: string;
-  userBookmarks: Bookmark[] | null;
+  userBookmarks: any[] | null;
   signOut: () => Promise<void>;
-  signInWithGoogle: () => Promise<void>;
+  signUp: (email: string, password: string, username: string) => Promise<void>;
+  signIn: (email: string, password: string) => Promise<void>;
 };
 
 export const AuthContext = createContext<AuthContext | null>(null);
@@ -48,134 +28,159 @@ export function AuthContextProvider({
   children
 }: AuthContextProviderProps): JSX.Element {
   const [user, setUser] = useState<User | null>(null);
-  const [userBookmarks, setUserBookmarks] = useState<Bookmark[] | null>(null);
+  const [userBookmarks, setUserBookmarks] = useState<any[] | null>(null);
   const [error, setError] = useState<Error | null>(null);
   const [loading, setLoading] = useState(true);
+  const router = useRouter();
+  const supabase = createClient();
 
   useEffect(() => {
-    const manageUser = async (authUser: AuthUser): Promise<void> => {
-      const { uid, displayName, photoURL } = authUser;
+    // Check for existing session
+    const checkUser = async () => {
+      try {
+        const {
+          data: { session }
+        } = await supabase.auth.getSession();
 
-      const userSnapshot = await getDoc(doc(usersCollection, uid));
-
-      if (!userSnapshot.exists()) {
-        let available = false;
-        let randomUsername = '';
-
-        while (!available) {
-          const normalizeName = displayName?.replace(/\s/g, '').toLowerCase();
-          const randomInt = getRandomInt(1, 10_000);
-
-          randomUsername = `${normalizeName as string}${randomInt}`;
-
-          const isUsernameAvailable = await checkUsernameAvailability(
-            randomUsername
-          );
-
-          if (isUsernameAvailable) available = true;
+        if (session?.user) {
+          // Convert Supabase user to our User type
+          const convertedUser: User = {
+            id: session.user.id,
+            name: session.user.user_metadata?.display_name || 'User',
+            username: session.user.user_metadata?.username || session.user.email?.split('@')[0] || 'user',
+            bio: session.user.user_metadata?.bio || null,
+            website: session.user.user_metadata?.website || null,
+            location: session.user.user_metadata?.location || null,
+            photoURL: session.user.user_metadata?.avatar_url || '/assets/twitter-avatar.jpg',
+            coverPhotoURL: session.user.user_metadata?.cover_photo_url || null,
+            theme: session.user.user_metadata?.theme || null,
+            accent: session.user.user_metadata?.accent || null,
+            verified: session.user.user_metadata?.verified || false,
+            following: session.user.user_metadata?.following || [],
+            followers: session.user.user_metadata?.followers || [],
+            createdAt: new Date(session.user.created_at),
+            updatedAt: null,
+            totalTweets: 0,
+            totalPhotos: 0,
+            pinnedTweet: null
+          };
+          setUser(convertedUser);
         }
-
-        const userData: WithFieldValue<User> = {
-          id: uid,
-          bio: null,
-          name: displayName as string,
-          theme: null,
-          accent: null,
-          website: null,
-          location: null,
-          photoURL: photoURL ?? '/assets/twitter-avatar.jpg',
-          username: randomUsername,
-          verified: false,
-          following: [],
-          followers: [],
-          createdAt: serverTimestamp(),
-          updatedAt: null,
-          totalTweets: 0,
-          totalPhotos: 0,
-          pinnedTweet: null,
-          coverPhotoURL: null
-        };
-
-        const userStatsData: WithFieldValue<Stats> = {
-          likes: [],
-          tweets: [],
-          updatedAt: null
-        };
-
-        try {
-          await Promise.all([
-            setDoc(doc(usersCollection, uid), userData),
-            setDoc(doc(userStatsCollection(uid), 'stats'), userStatsData)
-          ]);
-
-          const newUser = (await getDoc(doc(usersCollection, uid))).data();
-          setUser(newUser as User);
-        } catch (error) {
-          setError(error as Error);
-        }
-      } else {
-        const userData = userSnapshot.data();
-        setUser(userData);
-      }
-
-      setLoading(false);
-    };
-
-    const handleUserAuth = (authUser: AuthUser | null): void => {
-      setLoading(true);
-
-      if (authUser) void manageUser(authUser);
-      else {
-        setUser(null);
+      } catch (err) {
+        setError(err as Error);
+      } finally {
         setLoading(false);
       }
     };
 
-    onAuthStateChanged(auth, handleUserAuth);
-  }, []);
+    checkUser();
 
-  useEffect(() => {
-    if (!user) return;
-
-    const { id } = user;
-
-    const unsubscribeUser = onSnapshot(doc(usersCollection, id), (doc) => {
-      setUser(doc.data() as User);
+    // Subscribe to auth changes
+    const {
+      data: { subscription }
+    } = supabase.auth.onAuthStateChange(async (event, session) => {
+      if (event === 'SIGNED_IN' && session?.user) {
+        const convertedUser: User = {
+          id: session.user.id,
+          name: session.user.user_metadata?.display_name || 'User',
+          username: session.user.user_metadata?.username || session.user.email?.split('@')[0] || 'user',
+          bio: session.user.user_metadata?.bio || null,
+          website: session.user.user_metadata?.website || null,
+          location: session.user.user_metadata?.location || null,
+          photoURL: session.user.user_metadata?.avatar_url || '/assets/twitter-avatar.jpg',
+          coverPhotoURL: session.user.user_metadata?.cover_photo_url || null,
+          theme: session.user.user_metadata?.theme || null,
+          accent: session.user.user_metadata?.accent || null,
+          verified: session.user.user_metadata?.verified || false,
+          following: session.user.user_metadata?.following || [],
+          followers: session.user.user_metadata?.followers || [],
+          createdAt: new Date(session.user.created_at),
+          updatedAt: null,
+          totalTweets: 0,
+          totalPhotos: 0,
+          pinnedTweet: null
+        };
+        setUser(convertedUser);
+      } else if (event === 'SIGNED_OUT') {
+        setUser(null);
+      }
     });
 
-    const unsubscribeBookmarks = onSnapshot(
-      userBookmarksCollection(id),
-      (snapshot) => {
-        const bookmarks = snapshot.docs.map((doc) => doc.data());
-        setUserBookmarks(bookmarks);
-      }
-    );
-
     return () => {
-      unsubscribeUser();
-      unsubscribeBookmarks();
+      subscription?.unsubscribe();
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [user?.id]);
+  }, [supabase]);
 
-  const signInWithGoogle = async (): Promise<void> => {
+  const signUp = useCallback(async (
+    email: string,
+    password: string,
+    username: string
+  ): Promise<void> => {
     try {
-      const provider = new GoogleAuthProvider();
-      await signInWithPopup(auth, provider);
-    } catch (error) {
-      setError(error as Error);
-    }
-  };
+      setError(null);
+      const { data, error: signUpError } = await supabase.auth.signUp({
+        email,
+        password,
+        options: {
+          data: {
+            display_name: username,
+            username: username.toLowerCase(),
+            avatar_url: '/assets/twitter-avatar.jpg'
+          }
+        }
+      });
 
-  const signOut = async (): Promise<void> => {
+      if (signUpError) throw signUpError;
+
+      // Redirect to home after signup
+      if (data.user) {
+        setTimeout(() => {
+          void router.push('/home');
+        }, 500);
+      }
+    } catch (err) {
+      setError(err as Error);
+      throw err;
+    }
+  }, [router, supabase]);
+
+  const signIn = useCallback(async (email: string, password: string): Promise<void> => {
     try {
-      await signOutFirebase(auth);
-    } catch (error) {
-      setError(error as Error);
-    }
-  };
+      setError(null);
+      const { error: signInError } = await supabase.auth.signInWithPassword({
+        email,
+        password
+      });
 
-  const isAdmin = user ? user.username === 'ccrsxx' : false;
+      if (signInError) throw signInError;
+
+      // Redirect to home after signin
+      setTimeout(() => {
+        void router.push('/home');
+      }, 500);
+    } catch (err) {
+      setError(err as Error);
+      throw err;
+    }
+  }, [router, supabase]);
+
+  const signOut = useCallback(async (): Promise<void> => {
+    try {
+      setError(null);
+      const { error: signOutError } = await supabase.auth.signOut();
+
+      if (signOutError) throw signOutError;
+
+      setUser(null);
+      setTimeout(() => {
+        void router.push('/');
+      }, 500);
+    } catch (err) {
+      setError(err as Error);
+    }
+  }, [router, supabase]);
+
+  const isAdmin = user ? user.username === 'admin' : false;
   const randomSeed = useMemo(getRandomId, [user?.id]);
 
   const value: AuthContext = {
@@ -186,7 +191,8 @@ export function AuthContextProvider({
     randomSeed,
     userBookmarks,
     signOut,
-    signInWithGoogle
+    signUp,
+    signIn
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
