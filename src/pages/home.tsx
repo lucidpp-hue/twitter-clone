@@ -1,11 +1,11 @@
-import { useWindow } from '@lib/context/window-context';
-import { ProtectedLayout } from '@components/layout/common-layout';
-import { MainLayout } from '@components/layout/main-layout';
-import { SEO } from '@components/common/seo';
-import { MainContainer } from '@components/home/main-container';
-import { Input } from '@components/input/input';
-import { UpdateUsername } from '@components/home/update-username';
-import { MainHeader } from '@components/home/main-header';
+import { useWindow } from '../lib/context/window-context';
+import { ProtectedLayout } from '../components/layout/common-layout';
+import { MainLayout } from '../components/layout/main-layout';
+import { SEO } from '../components/common/seo';
+import { MainContainer } from '../components/home/main-container';
+import { Input } from '../components/input/input';
+import { UpdateUsername } from '../components/home/update-username';
+import { MainHeader } from '../components/home/main-header';
 import type { ReactElement, ReactNode } from 'react';
 
 export default function Home(): JSX.Element {
