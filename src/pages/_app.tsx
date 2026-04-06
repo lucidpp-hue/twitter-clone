@@ -1,4 +1,4 @@
-import '@styles/globals.scss';
+import '../styles/globals.scss';
 
 import { AuthContextProvider } from '../lib/context/auth-context';
 import { ThemeContextProvider } from '../lib/context/theme-context';
