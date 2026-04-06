@@ -1,10 +1,10 @@
 import { useState, useEffect, useContext, createContext, useMemo, useCallback } from 'react';
 import { useRouter } from 'next/router';
-import { createClient } from '@lib/supabase/client';
-import { getRandomId, getRandomInt } from '@lib/random';
+import { createClient } from '../supabase/client';
+import { getRandomId, getRandomInt } from '../random';
 import type { ReactNode } from 'react';
 import type { User as SupabaseUser } from '@supabase/supabase-js';
-import type { User } from '@lib/types/user';
+import type { User } from '../types/user';
 
 type AuthContext = {
   user: User | null;
