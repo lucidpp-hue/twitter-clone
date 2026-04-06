@@ -1,32 +1,19 @@
-import { AnimatePresence } from 'framer-motion';
-import { where, orderBy } from 'firebase/firestore';
-import { useWindow } from '@lib/context/window-context';
-import { useInfiniteScroll } from '@lib/hooks/useInfiniteScroll';
-import { tweetsCollection } from '@lib/firebase/collections';
-import { HomeLayout, ProtectedLayout } from '@components/layout/common-layout';
-import { MainLayout } from '@components/layout/main-layout';
-import { SEO } from '@components/common/seo';
-import { MainContainer } from '@components/home/main-container';
-import { Input } from '@components/input/input';
-import { UpdateUsername } from '@components/home/update-username';
-import { MainHeader } from '@components/home/main-header';
-import { Tweet } from '@components/tweet/tweet';
-import { Loading } from '@components/ui/loading';
-import { Error } from '@components/ui/error';
+import { useWindow } from '../lib/context/window-context';
+import { ProtectedLayout } from '../components/layout/common-layout';
+import { MainLayout } from '../components/layout/main-layout';
+import { SEO } from '../components/common/seo';
+import { MainContainer } from '../components/home/main-container';
+import { Input } from '../components/input/input';
+import { UpdateUsername } from '../components/home/update-username';
+import { MainHeader } from '../components/home/main-header';
 import type { ReactElement, ReactNode } from 'react';
 
 export default function Home(): JSX.Element {
   const { isMobile } = useWindow();
 
-  const { data, loading, LoadMore } = useInfiniteScroll(
-    tweetsCollection,
-    [where('parent', '==', null), orderBy('createdAt', 'desc')],
-    { includeUser: true, allowNull: true, preserve: true }
-  );
-
   return (
     <MainContainer>
-      <SEO title='Home / Twitter' />
+      <SEO title='Home / PeytOtoria' />
       <MainHeader
         useMobileSidebar
         title='Home'
@@ -36,20 +23,11 @@ export default function Home(): JSX.Element {
       </MainHeader>
       {!isMobile && <Input />}
       <section className='mt-0.5 xs:mt-0'>
-        {loading ? (
-          <Loading className='mt-5' />
-        ) : !data ? (
-          <Error message='Something went wrong' />
-        ) : (
-          <>
-            <AnimatePresence mode='popLayout'>
-              {data.map((tweet) => (
-                <Tweet {...tweet} key={tweet.id} />
-              ))}
-            </AnimatePresence>
-            <LoadMore />
-          </>
-        )}
+        <div className='border-b border-light-border p-8 text-center dark:border-dark-border'>
+          <p className='text-light-secondary dark:text-dark-secondary'>
+            Feed feature coming soon! Tweets will appear here once fully integrated with Supabase.
+          </p>
+        </div>
       </section>
     </MainContainer>
   );

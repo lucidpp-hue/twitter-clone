@@ -1,8 +1,5 @@
 import { useState, useEffect } from 'react';
-import { getDoc, doc, onSnapshot } from 'firebase/firestore';
-import { usersCollection } from '@lib/firebase/collections';
 import { useCacheRef } from './useCacheRef';
-import type { DocumentReference } from 'firebase/firestore';
 import type { User } from '@lib/types/user';
 
 type UseDocument<T> = {
@@ -14,17 +11,17 @@ type DataWithRef<T> = T & { createdBy: string };
 type DataWithUser<T> = UseDocument<T & { user: User }>;
 
 export function useDocument<T>(
-  docRef: DocumentReference<T>,
+  docRef: any,
   options: { includeUser: true; allowNull?: boolean; disabled?: boolean }
 ): DataWithUser<T>;
 
 export function useDocument<T>(
-  docRef: DocumentReference<T>,
+  docRef: any,
   options?: { includeUser?: false; allowNull?: boolean; disabled?: boolean }
 ): UseDocument<T>;
 
 export function useDocument<T>(
-  docRef: DocumentReference<T>,
+  docRef: any,
   options?: { includeUser?: boolean; allowNull?: boolean; disabled?: boolean }
 ): UseDocument<T> | DataWithUser<T> {
   const [data, setData] = useState<T | null>(null);

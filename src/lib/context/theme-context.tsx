@@ -1,10 +1,10 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 
 import { useState, useEffect, createContext, useContext } from 'react';
-import { updateUserTheme } from '@lib/firebase/utils';
+import { updateUserTheme } from '../firebase/utils';
 import { useAuth } from './auth-context';
 import type { ReactNode, ChangeEvent } from 'react';
-import type { Theme, Accent } from '@lib/types/theme';
+import type { Theme, Accent } from '../types/theme';
 
 type ThemeContext = {
   theme: Theme;
