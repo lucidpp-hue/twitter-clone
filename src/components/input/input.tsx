@@ -3,14 +3,6 @@ import { useState, useEffect, useRef, useId } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import cn from 'clsx';
 import { toast } from 'react-hot-toast';
-import { addDoc, getDoc, serverTimestamp } from 'firebase/firestore';
-import { tweetsCollection } from '@lib/firebase/collections';
-import {
-  manageReply,
-  uploadImages,
-  manageTotalTweets,
-  manageTotalPhotos
-} from '@lib/firebase/utils';
 import { useAuth } from '@lib/context/auth-context';
 import { sleep } from '@lib/utils';
 import { getImagesData } from '@lib/validation';
@@ -19,10 +11,8 @@ import { InputForm, fromTop } from './input-form';
 import { ImagePreview } from './image-preview';
 import { InputOptions } from './input-options';
 import type { ReactNode, FormEvent, ChangeEvent, ClipboardEvent } from 'react';
-import type { WithFieldValue } from 'firebase/firestore';
 import type { Variants } from 'framer-motion';
 import type { User } from '@lib/types/user';
-import type { Tweet } from '@lib/types/tweet';
 import type { FilesWithId, ImagesPreview, ImageData } from '@lib/types/file';
 
 type InputProps = {
@@ -77,32 +67,8 @@ export function Input({
 
     setLoading(true);
 
-    const isReplying = reply ?? replyModal;
-
-    const userId = user?.id as string;
-
-    const tweetData: WithFieldValue<Omit<Tweet, 'id'>> = {
-      text: inputValue.trim() || null,
-      parent: isReplying && parent ? parent : null,
-      images: await uploadImages(userId, selectedImages),
-      userLikes: [],
-      createdBy: userId,
-      createdAt: serverTimestamp(),
-      updatedAt: null,
-      userReplies: 0,
-      userRetweets: []
-    };
-
-    await sleep(500);
-
-    const [tweetRef] = await Promise.all([
-      addDoc(tweetsCollection, tweetData),
-      manageTotalTweets('increment', userId),
-      tweetData.images && manageTotalPhotos('increment', userId),
-      isReplying && manageReply('increment', parent?.id as string)
-    ]);
-
-    const { id: tweetId } = await getDoc(tweetRef);
+    // TODO: Implement Supabase tweet creation
+    toast.success('Tweet feature coming soon!');
 
     if (!modal && !replyModal) {
       discardTweet();
@@ -110,18 +76,6 @@ export function Input({
     }
 
     if (closeModal) closeModal();
-
-    toast.success(
-      () => (
-        <span className='flex gap-2'>
-          Your Tweet was sent
-          <Link href={`/tweet/${tweetId}`}>
-            <a className='custom-underline font-bold'>View</a>
-          </Link>
-        </span>
-      ),
-      { duration: 6000 }
-    );
   };
 
   const handleImageUpload = (
